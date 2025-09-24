@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Thought.",
+  name: "Thought",
   title: "A postgres extension for semantic operators",
   description: "Thought Machines",
   accentColor: "#1d4ed8",
