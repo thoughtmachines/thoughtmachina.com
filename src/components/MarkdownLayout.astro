@@ -19,91 +19,152 @@ const headings = [];
     <script>
         hljs.highlightAll();
     </script>
+    <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1d4ed8;
+            text-decoration: none;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #1d4ed8;
+        }
+    </style>
 </head>
-<div class="layout">
-    <aside class="sidebar">
+<body>
+    <!-- Top Bar -->
+    <header>
+        <a href="/" class="logo">The Thought Blog</a>
         <nav>
-            <ul>
-                <script>
-                    // Extract headings dynamically from the rendered content
-                    document.addEventListener("DOMContentLoaded", () => {
-                        const content =
-                            document.querySelector(".markdown-content");
-                        const sidebar =
-                            document.querySelector(".sidebar nav ul");
-                        const headings = content.querySelectorAll("h1, h2, h3");
-
-                        headings.forEach((heading) => {
-                            const level = parseInt(heading.tagName[1]); // Get heading level
-                            const text = heading.textContent.trim(); // Get heading text
-                            const id =
-                                heading.id ||
-                                text.toLowerCase().replace(/\s+/g, "-"); // Generate or use existing ID
-                            heading.id = id; // Set the ID on the heading
-
-                            // Add the heading to the sidebar
-                            const li = document.createElement("li");
-                            li.style.marginLeft = `${(level - 1) * 1.5}rem`;
-                            const a = document.createElement("a");
-                            a.href = `#${id}`;
-                            a.textContent = text;
-                            li.appendChild(a);
-                            sidebar.appendChild(li);
-                        });
-                    });
-                </script>
-            </ul>
+            <a href="/">Home</a>
+            <!-- <a href="/about">About</a> -->
+            <a href="/blog">Blog</a>
+            <!-- <a href="/contact">Contact</a> -->
         </nav>
-    </aside>
-    <main class="markdown-content">
-        <slot />
-    </main>
-</div>
+    </header>
+    <div class="layout">
+        <aside class="sidebar">
+            <nav>
+                <ul>
+                    <script>
+                        // Extract headings dynamically from the rendered content
+                        document.addEventListener("DOMContentLoaded", () => {
+                            const content =
+                                document.querySelector(".markdown-content");
+                            const sidebar =
+                                document.querySelector(".sidebar nav ul");
+                            const headings = content
+                                ? content.querySelectorAll("h1, h2, h3")
+                                : [];
 
-<style>
-    .layout {
-        display: flex;
-    }
+                            headings.forEach((heading) => {
+                                const level = parseInt(heading.tagName[1]); // Get heading level
+                                const text = heading.textContent
+                                    ? heading.textContent.trim()
+                                    : ""; // Get heading text
+                                const id =
+                                    heading.id ||
+                                    text.toLowerCase().replace(/\s+/g, "-"); // Generate or use existing ID
+                                heading.id = id; // Set the ID on the heading
 
-    .sidebar {
-        width: 250px;
-        padding: 1rem;
-        background-color: #f4f4f4;
-        border-right: 1px solid #ddd;
-        position: sticky; /* Make the sidebar sticky */
-        top: 0; /* Stick to the top of the viewport */
-        height: 100vh; /* Ensure it spans the full height of the viewport */
-        overflow-y: auto; /* Add scrolling if the content overflows */
-    }
+                                // Add the heading to the sidebar
+                                const li = document.createElement("li");
+                                li.style.marginLeft = `${(level - 1) * 1.5}rem`;
+                                const a = document.createElement("a");
+                                a.href = `#${id}`;
+                                a.textContent = text;
+                                li.appendChild(a);
+                                if (sidebar) {
+                                    sidebar.appendChild(li);
+                                }
+                            });
+                        });
+                    </script>
+                </ul>
+            </nav>
+        </aside>
+        <main class="markdown-content">
+            <slot />
+        </main>
+    </div>
 
-    .sidebar nav ul {
-        list-style: none;
-        padding: 0;
-    }
+    <style>
+        .layout {
+            display: flex;
+        }
 
-    .sidebar nav ul li {
-        margin-bottom: 0.5rem;
-    }
+        .sidebar {
+            font-family: "Georgia", "Times New Roman", Times, serif;
+            font-size: 14px;
+            top: 4rem; /* Adjust this value to match the height of the top bar */
+            z-index: 5; /* Ensure the sidebar is below the top bar */
+            width: 250px;
+            padding: 1rem;
+            background-color: #fffdf9;
+            position: sticky; /* Make the sidebar sticky */
+            top: 4rem; /* Stick to the top of the viewport */
+            height: calc(
+                100vh
+            ); /* Ensure the sidebar spans the viewport height minus the top bar */
+            overflow-y: auto; /* Add scrolling if the content overflows */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            line-height: 1.4;
+        }
 
-    .sidebar nav ul li a {
-        text-decoration: none; /* Remove underline */
-        color: #333;
-        font-weight: 500;
-        padding: 0.5rem 0.75rem;
-        display: block;
-        border-radius: 4px;
-        transition:
-            background-color 0.3s,
-            color 0.3s; /* Smooth hover effects */
-    }
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+        }
 
-    .sidebar nav ul li a:hover {
-        background-color: #007acc; /* Modern hover background */
-        color: white; /* Change text color on hover */
-    }
+        .sidebar nav ul li {
+            margin-bottom: 0.5rem;
+        }
 
-    .markdown-content {
-        flex: 1;
-        padding: 1rem;
-    }
-</style>
+        .sidebar nav ul li a {
+            text-decoration: none; /* Remove underline */
+            color: #333;
+            font-weight: 500;
+            display: block;
+            border-radius: 4px;
+            transition:
+                background-color 0.3s,
+                color 0.3s; /* Smooth hover effects */
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #007acc; /* Modern hover background */
+            color: white; /* Change text color on hover */
+        }
+
+        .markdown-content {
+            flex: 1;
+            padding: 1rem;
+        }
+    </style>
+</body>

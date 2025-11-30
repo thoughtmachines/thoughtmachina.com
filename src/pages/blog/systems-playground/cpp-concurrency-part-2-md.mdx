@@ -1,5 +1,9 @@
 # Synchronizing Concurrent Operations
 
+Author: jay@thoughtmachina.com
+
+Welcome to the 2nd blog in the **Systems Playground** blog series!
+
 ## Using Mutexes in C++
 
 Mutexes are a fundamental synchronization mechanism in C++ that protect shared data from concurrent access. While a `std::mutex` can be locked and unlocked manually using its `lock()` and `unlock()` member functions, doing so is error-prone-every exit path, including those created by exceptions, must correctly release the lock. To avoid this risk, C++ relies on the RAII (Resource Acquisition Is Initialization) pattern through `std::lock_guard`. A `std::lock_guard` acquires ownership of a given mutex in its constructor and automatically releases it in its destructor, guaranteeing that the mutex is always unlocked safely and consistently.
@@ -90,7 +94,7 @@ public:
 };
 ```
 
-The consumer waits on the `Signal` object until the vector contains data. The lambda predicate is checked under a lock, and the thread sleeps efficiently until the producer notifies it. Once awakened, the consumer prints the first produced value. This matches the classic “wait for data, then process it” behavior found in real concurrent systems.
+The consumer waits on the `Signal` object until the vector contains data. The lambda predicate is checked under a lock, and the thread sleeps efficiently until the producer notifies it. Once awakened, the consumer prints the first produced value. This matches the classic - wait for data, then process it - behavior found in real concurrent systems.
 
 ---
 
