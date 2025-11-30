@@ -61,50 +61,69 @@
 
             .grid-container {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
-                padding: 2rem;
-                max-width: 1200px;
-                margin: 0 auto;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 0.8rem; /* slightly smaller gap */
+                padding: 1rem; /* less padding around the grid */
+                max-width: 750px; /* reduce overall grid width */
+                margin: 0 auto; /* center grid */
             }
 
             .blog-box {
-                background-color: white;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 1.5rem;
-                text-align: center;
+                display: flex;
+                flex-direction: column;
+                background-color: #ffffff;
+                border-radius: 1px;
+                border: 1px solid #e0e0e0;
+                overflow: hidden;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+                text-decoration: none;
+                color: inherit;
                 transition:
-                    transform 0.2s,
-                    box-shadow 0.2s;
-                font-family: "Helvetica", "Arial", sans-serif;
-                /* Apply sans-serif font */
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+                height: auto; /* adjusts for text */
             }
 
             .blog-box:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+                transform: translateY(-4px);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
             }
 
-            .blog-box h2 {
-                font-size: 1.5rem;
-                margin: 0 0 1rem;
+            /* Image wrapper for 4:3 aspect ratio */
+            .image-wrapper {
+                width: 100%;
+                aspect-ratio: 4 / 3; /* image ratio */
+                overflow: hidden;
             }
 
-            .blog-box p {
-                font-size: 1rem;
-                color: #666;
-                margin: 0 0 1.5rem;
+            .image-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
             }
 
-            .blog-box a {
-                text-decoration: none;
-                color: #4a90e2;
-                font-weight: bold;
+            /* Text wrapper takes remaining space */
+            .text-wrapper {
+                padding: 1rem;
+                flex: 1; /* grows to fill remaining space */
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
             }
 
-            .blog-box a:hover {
-                text-decoration: underline;
+            .text-wrapper h2 {
+                font-size: 1.2rem;
+                font-weight: 600;
+                margin: 0 0 0.5rem;
+            }
+
+            .text-wrapper p {
+                font-size: 0.95rem;
+                color: #4b5563;
+                margin: 0;
+                line-height: 1.4;
             }
 
             .background-overlay {
@@ -266,20 +285,35 @@
         </svg>
 
         <div class="grid-container">
-            <div class="blog-box">
-                <h2>Systems Playground - Part 1</h2>
-                <p>Managing Threads in C++</p>
-                <a href="/blog/systems-playground/cpp-concurrency-part-1"
-                    >Read More</a
-                >
-            </div>
-            <div class="blog-box">
-                <h2>Systems Playground - Part 2</h2>
-                <p>Synchronizing Concurrent Operations in C++</p>
-                <a href="/blog/systems-playground/cpp-concurrency-part-2"
-                    >Read More</a
-                >
-            </div>
-        </div>
-    </body>
+            <a
+                href="/blog/systems-playground/cpp-concurrency-part-1"
+                class="blog-box"
+            >
+                <div class="image-wrapper">
+                    <img
+                        src="https://media.istockphoto.com/id/629285904/photo/programming-code-abstract-technology-background-of-software-deve.jpg?s=612x612&w=0&k=20&c=YskpkpUYyGqsz8OMtMdGZaZUr3hlAIvtTcaHpTbGL4g="
+                    />
+                </div>
+                <div class="text-wrapper">
+                    <h2>Systems Playground - Part 1</h2>
+                    <p>Managing Threads in C++</p>
+                </div>
+            </a>
+
+            <a
+                href="/blog/systems-playground/cpp-concurrency-part-2"
+                class="blog-box"
+            >
+                <div class="image-wrapper">
+                    <img
+                        src="https://media.istockphoto.com/id/629285904/photo/programming-code-abstract-technology-background-of-software-deve.jpg?s=612x612&w=0&k=20&c=YskpkpUYyGqsz8OMtMdGZaZUr3hlAIvtTcaHpTbGL4g="
+                    />
+                </div>
+                <div class="text-wrapper">
+                    <h2>Systems Playground - Part 2</h2>
+                    <p>Synchronizing Concurrent Operations in C++</p>
+                </div>
+            </a>
+        </div></body
+    >
 </html>
