@@ -125,38 +125,34 @@
 /* ============================
    Code Blocks (no syntax highlighting)
 ============================ */
-.markdown-content pre {
-    background-color: #fff7f2;
-    /* soft, light peach-white */
-    color: #333;
-    /* all code text will be this color */
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    padding: 1rem 1.2rem;
-    border-radius: 8px;
+pre {
+    font-size: 0.7rem;
+    line-height: 1.45;
     overflow-x: auto;
-    margin-bottom: 1.5rem;
-    border: 1px solid #f0e0d6;
-    white-space: pre-wrap;
-    word-break: break-word;
+    padding: 1rem;
+    padding-left: 2.5rem;
+    border: 1px solid #444;
+    /* darker border for dark theme */
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    /* dark background */
+    color: #d4d4d4;
+    /* light text */
 }
 
-/* Remove all internal highlighting / span colors */
-.markdown-content pre span {
-    background: none !important;
-    color: inherit !important;
-    font-weight: normal !important;
-    font-style: normal !important;
+/* optional: customize scrollbar for dark theme */
+pre::-webkit-scrollbar {
+    height: 8px;
+    background: #2a2a2a;
 }
 
-/* Inline code (no highlighting) */
-.markdown-content code {
-    background-color: #ffeedd;
-    /* slightly darker peach for inline code */
-    padding: 0.15rem 0.4rem;
+pre::-webkit-scrollbar-thumb {
+    background: #555;
     border-radius: 4px;
-    font-family: 'Fira Code', 'Courier New', monospace;
-    font-size: 0.9rem;
-    color: #333 !important;
+}
+
+pre code {
+    font-size: inherit;
+    color: inherit;
+    /* inherit text color */
 }
