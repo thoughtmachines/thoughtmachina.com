@@ -1,0 +1,570 @@
+# Managing Threads
+
+Author: jay@thoughtmachina.com
+
+Welcome to the **Systems Playground** blog series! In this post, we explore practical techniques for managing threads efficiently and safely in C++ applications.
+
+## Managing thread lifetimes
+
+Thread guards are a crucial RAII (Resource Acquisition Is Initialization) pattern in C++ that ensures proper cleanup of thread resources. When a thread object goes out of scope without being joined or detached, the program will terminate by calling `std::terminate()`. A thread guard wraps a thread object and automatically joins it in its destructor, preventing this issue and guaranteeing that threads are properly cleaned up even when exceptions occur.
+
+The key benefits of using thread guards include:
+
+- **Automatic resource management:** The thread is always joined when the guard goes out of scope
+- **Exception safety:** Even if an exception is thrown, the destructor ensures the thread is properly handled
+- **Simplified code:** No need to manually track and join threads throughout your code
+
+```cpp
+#include <thread>
+#include <iostream>
+
+class local_background_task {
+public:
+    void operator()() const {
+        std::cout << "Hello" << std::endl;
+    }
+};
+
+class thread_guard {
+public:
+    thread_guard(std::thread& t) : m_thread(t) {}
+
+    ~thread_guard() {
+        if (m_thread.joinable()) {
+            m_thread.join();
+        }
+    }
+private:
+    std::thread& m_thread;
+    thread_guard(thread_guard const&) = delete;
+    thread_guard& operator=(thread_guard const&) = delete;
+};
+
+int main(int argc, char const *argv[]) {
+    local_background_task task;
+    std::thread my_thread(task);
+    thread_guard guard(my_thread);
+    return 0;
+}
+```
+
+- **Thread guards implement RAII pattern:** Automatically manage thread lifecycle and prevent `std::terminate()` calls
+- **Destructor ensures cleanup:** Threads are joined when guard goes out of scope, even during exceptions
+- **Copy operations disabled:** Thread guards use deleted copy constructor and assignment operator. Copying or assigning such an object would be dangerous, because it might then outlive the scope of the thread it was joining. By declaring them as deleted, any attempt to copy a thread_guard object will generate a compilation error. The following is a brief refresher for Copy/Move semantics in C++:
+    
+    [Copy/Move Semantics in C++](https://www.notion.so/Copy-Move-Semantics-in-C-2b87cf699343804f8193f9ebd51446cb?pvs=21)
+    
+- **Exception-safe design:** Guarantees proper thread handling regardless of control flow
+
+Instead of joining a thread, you can call `detach()` to separate the thread from its thread object, allowing it to run independently in the background. Once detached, the thread continues execution even after the thread object is destroyed, and you lose the ability to communicate with or wait for that thread.
+
+Key considerations when using `detach()`:
+
+- **Fire-and-forget model:** Detached threads run independently and cannot be joined later
+- **Daemon threads:** Detached threads behave like daemon threads, continuing to run even as the main thread exits
+- **No synchronization:** You cannot wait for a detached thread to complete or retrieve its result
+- **Lifetime concerns:** Must ensure any data accessed by the detached thread remains valid for the thread's entire lifetime
+
+```cpp
+#include <thread>
+#include <iostream>
+
+void background_task() {
+    std::cout << "Running in background" << std::endl;
+}
+
+int main() {
+    std::thread my_thread(background_task);
+    my_thread.detach(); // Thread runs independently
+    
+    // No need to join, thread continues in background
+    return 0;
+}
+```
+
+While `detach()` is simpler in some cases, thread guards with `join()` are generally preferred because they provide better control over thread lifetime and ensure proper cleanup before program termination.
+
+## Passing values to thread functions
+
+Before diving deeper into this topic, let's review some important C++ concepts that are essential for understanding how the `std::thread` constructor works and how arguments are passed to thread functions.
+
+- Keep the following line at the back of your head:
+    - When you create a `std::thread` in C++, the thread constructor takes a **callable** (function, functor, lambda) and ***copies*** the arguments you pass to it into internal storage. Those copies are then used to invoke the function inside the new thread.
+
+### Lvalues and Rvalues
+
+In C++, expressions are categorized as either lvalues or rvalues, which is fundamental to understanding move semantics and perfect forwarding in concurrent programming.
+
+**Lvalues** (locator values) are expressions that refer to a memory location and can appear on the left side of an assignment. They have a persistent address and identity:
+
+- **Examples:** Variables, array elements, dereferenced pointers, functions returning references
+- **Can take address:** You can use the `&` operator on an lvalue
+- **Persistent:** Lvalues persist beyond a single expression
+- **Can be named!**
+
+```cpp
+int x = 10;        // x is an lvalue
+int& ref = x;      // ref is an lvalue reference to x
+int* ptr = &x;     // Can take address of lvalue
+```
+
+**Rvalues** (read values) are temporary expressions that don't have a persistent memory address. They typically appear on the right side of an assignment:
+
+- **Examples:** Literals, temporary objects, expressions like `x + y`
+- **Cannot take address:** You cannot use `&` on an rvalue
+- **Temporary:** Rvalues are destroyed at the end of the expression
+- **Cannot be named!**
+
+```cpp
+int y = 20;        // 20 is an rvalue
+int z = x + y;     // x + y is an rvalue (temporary result)
+// int* ptr = &(x + y);  // Error: cannot take address of rvalue
+```
+
+### Lvalue References and Rvalue References
+
+C++ provides two types of references that correspond to lvalues and rvalues, each serving different purposes in memory management and performance optimization.
+
+**Lvalue References** are declared with a single ampersand (`&`) and bind to lvalues. They allow you to create an alias to an existing object:
+
+- **Syntax:** `Type& ref = lvalue;`
+- **Must bind to lvalues:** Cannot bind to temporary objects or rvalues (with exception of const lvalue references)
+
+```cpp
+int x = 10;
+int& lref = x;         // lvalue reference to x
+lref = 20;             // modifies x through the reference
+
+// int& bad = 5;       // Error: cannot bind lvalue reference to rvalue
+const int& good = 5;   // OK: const lvalue reference can bind to rvalue
+```
+
+- **Common uses:** Function parameters to avoid copying, returning references from functions, creating aliases
+
+```cpp
+// Example: Returning lvalue references from functions
+
+class DataStore {
+private:
+    std::vector<int> data;
+    
+public:
+    DataStore() : data({10, 20, 30, 40, 50}) {}
+    
+    // Return lvalue reference to allow modification
+    int& get(size_t index) {
+        return data[index];
+    }
+    
+    // Return const lvalue reference for read-only access
+    const int& get_const(size_t index) const {
+        return data[index];
+    }
+};
+
+int main() {
+    DataStore store;
+    
+    // get() returns lvalue reference, so we can modify the element
+    store.get(2) = 100;  // Changes data[2] from 30 to 100
+    
+    // We can also create an lvalue reference to the returned reference
+    int& ref = store.get(1);
+    ref = 200;  // Changes data[1] from 20 to 200
+    
+    // Read-only access through const lvalue reference
+    const int& val = store.get_const(0);
+    std::cout << val << std::endl;  // prints 10
+    // val = 50;  // Error: cannot modify through const reference
+    
+    return 0;
+}
+```
+
+This example demonstrates how returning lvalue references from functions allows callers to directly modify the internal data of an object. The `get()` function returns a non-const reference to an element, enabling modification, while `get_const()` returns a const reference for read-only access. This pattern is commonly used in container classes like `std::vector`, where `operator[]` returns a reference to allow both reading and writing elements.
+
+**Rvalue References** are declared with double ampersands (`&&`) and bind to rvalues. They were introduced in C++11 to enable move semantics and perfect forwarding:
+
+- **Syntax:** `Type&& ref = rvalue;`
+- **Bind to temporaries:** Can bind to rvalues and temporary objects
+
+```cpp
+int&& rref = 10;              // rvalue reference to temporary
+int&& rref2 = x + y;          // binds to temporary result
+
+std::vector<int> vec1 = {1, 2, 3};
+std::vector<int> vec2 = std::move(vec1);  // move vec1's resources to vec2
+// vec1 is now in valid but unspecified state
+```
+
+Binding a temporary to an **rvalue reference** extends its lifetime **until the reference goes out of scope**:
+
+```cpp
+std::string&& tmp = std::string("Hello");
+std::cout << tmp;  // OK, temporary lives until tmp goes out of scope
+```
+
+- **Enable move semantics:** Allow transferring resources from temporary objects instead of copying
+
+```cpp
+#include <iostream>
+#include <vector>
+
+std::vector<int> makeVector() {
+    std::vector<int> v{1,2,3,4};
+    return v;  // temporary returned → rvalue
+}
+
+int main() {
+    std::vector<int> v = makeVector(); // Move constructor called
+}
+```
+
+- **Common uses:** Move constructors, move assignment operators, perfect forwarding
+
+```cpp
+#include <iostream>
+#include <cstring>
+
+class Buffer {
+    char* data;
+public:
+    // Constructor
+    Buffer(const char* s) {
+        data = new char[strlen(s)+1];
+        strcpy(data, s);
+    }
+
+    // Move constructor (explicit use of rvalue reference)
+    Buffer(Buffer&& other) noexcept : data(other.data) {
+        other.data = nullptr; // leave source in valid state
+        std::cout << "Moved\n";
+    }
+
+    ~Buffer() { delete[] data; }
+
+    void print() { std::cout << (data ? data : "null") << "\n"; }
+};
+
+int main() {
+    Buffer b1("Hello");
+    Buffer b2(std::move(b1)); // Calls move constructor explicitly
+    b1.print(); // null
+    b2.print(); // Hello
+}
+```
+
+**Key Differences and Use Cases:**
+
+- **Lvalue references for aliasing:** Use when you want to refer to an existing object without copying
+- **Rvalue references for optimization:** Use to implement move semantics and avoid expensive copies of temporary objects
+- **Const lvalue references are universal:** `const T&` can bind to both lvalues and rvalues, making them useful for function parameters
+- **Move semantics with rvalue references:** Allow "stealing" resources from temporaries, significantly improving performance for resource-heavy objects
+
+```cpp
+// Function overloading with lvalue and rvalue references
+void process(std::string& s) {
+    std::cout << "Lvalue reference: " << s << std::endl;
+}
+
+void process(std::string&& s) {
+    std::cout << "Rvalue reference: " << s << std::endl;
+}
+
+int main() {
+    std::string str = "Hello";
+    process(str);                    // calls lvalue version
+    process(std::string("World"));   // calls rvalue version
+    process(std::move(str));         // calls rvalue version
+    return 0;
+}
+```
+
+### std::forward
+
+`std::forward<T>(x)` is a **cast** that preserves the **value category** of a function argument:
+
+- If `x` is originally an **lvalue**, `std::forward` passes it as an **lvalue**.
+- If `x` is originally an **rvalue**, `std::forward` passes it as an **rvalue**.
+
+It is primarily used in **template functions** to implement **perfect forwarding**.
+
+Consider the following generic wrapper function:
+
+```cpp
+template<typename T>
+void wrapper(T&& arg) {
+    f(arg); // always treats arg as lvalue!
+}
+```
+
+- `arg` is a **universal/forwarding reference** (`T&&` in a template)
+- But **named variables are always lvalues** inside the function
+- So `f(arg)` always sees it as an **lvalue**, even if you passed an rvalue.
+
+**Problem:** You lose the ability to call **move constructors**.
+
+**Solution:** Use `std::forward`:
+
+```cpp
+template<typename T>
+void wrapper(T&& arg) {
+    f(std::forward<T>(arg)); // preserves original lvalue/rvalue
+}
+```
+
+- If `arg` was an rvalue → passed as rvalue → move constructor can be used
+- If `arg` was an lvalue → passed as lvalue → copy constructor used
+- `arg` is declared as `T&&`, a **forwarding reference**.
+    - Forwarding reference = `T&&` where T is deduced
+    - If you pass an **lvalue**: `T` deduces to `int&`, `T&&` becomes `int& &&` → collapses to `int&`
+    - If you pass an **rvalue**: `T` deduces to `int`, `T&&` stays `int&&`
+    - C++ **reference collapsing rules** apply:
+        
+        
+        | Rule | Result |
+        | --- | --- |
+        | `& &` | `&` |
+        | `& &&` | `&` |
+        | `&& &` | `&` |
+        | `&& &&` | `&&` |
+
+Example in the wild:
+
+```cpp
+#include <iostream>
+#include <utility>
+
+void print(const std::string& s) { std::cout << "lvalue: " << s << "\n"; }
+void print(std::string&& s) { std::cout << "rvalue: " << s << "\n"; }
+
+template<typename T>
+void wrapper(T&& arg) {
+    print(std::forward<T>(arg)); // perfect forwarding
+}
+
+int main() {
+    std::string s = "Hello";
+    wrapper(s);             // lvalue: s is an lvalue
+    wrapper(std::string("Hi")); // rvalue: temporary string
+}
+```
+
+`std::forward<T>(x)` is essentially a **conditional cast**:
+
+- If `T` is an **lvalue reference type**, it returns `x` as an lvalue.
+- Otherwise (if `T` is not an lvalue reference), it casts `x` to an rvalue (`T&&`).
+
+OK, so why `std::forward` matters:
+
+`std::thread` is **template-based**:
+
+```cpp
+template<class F, class... Args>
+explicit thread(F&& f, Args&&... args);
+```
+
+- `F&& f` and `Args&&... args` are **forwarding (universal) references**.
+- The thread constructor wants to **perfectly forward** your arguments into internal storage.
+
+This is done internally using **`std::forward`**:
+
+```cpp
+// Simplified
+invoke(std::forward<F>(f), std::forward<Args>(args)...);
+```
+
+- Preserves **lvalue/rvalue nature** of arguments:
+    - If you pass a temporary → it stays a temporary → move semantics can be applied
+    - If you pass `std::ref(x)` → it is forwarded correctly → reference is preserved. tf is a `std::ref`?
+
+### std::ref
+
+`std::ref` is a helper function that returns a **`std::reference_wrapper<T>`**.
+
+- It allows you to **pass references** to functions or threads that would normally **copy arguments**.
+- Without `std::ref`, facilities like `std::thread` or `std::async` **always copy arguments**.
+- `std::ref(n)` creates a **copyable wrapper** that holds a pointer to `n`.
+- The thread copies the wrapper (safe), but the wrapper still refers to the original `n`.
+
+Internally, `std::ref` returns a **`reference_wrapper<T>`**:
+
+```cpp
+template <typename T>
+class reference_wrapper {
+    T* ptr; // pointer to original object
+public:
+    explicit reference_wrapper(T& t) : ptr(&t) {}
+
+    // Copyable
+    reference_wrapper(const reference_wrapper&) = default;
+    reference_wrapper& operator=(const reference_wrapper&) = default;
+
+    // Implicit conversion to T&
+    operator T&() const { return *ptr; }
+
+    // Explicit access
+    T& get() const { return *ptr; }
+
+    // Can call if T is callable
+    template<typename... Args>
+    auto operator()(Args&&... args) const -> decltype((*ptr)(std::forward<Args>(args)...)) {
+        return (*ptr)(std::forward<Args>(args)...);
+    }
+};
+
+```
+
+Ok, whats the use of `std::ref` ?
+
+```cpp
+void increment(int& x) { x++; }
+
+int n = 5;
+std::thread t(increment, n); // ❌ passes by value, not reference
+```
+
+- Here, `n` is **copied** into the thread storage.
+- The function receives a reference to the **copy**, not the original `n`.
+
+Solution: `std::ref(n)`:
+
+```cpp
+std::thread t(increment, std::ref(n)); // ✅ passes reference
+```
+
+`std::forward` is called internally in the thread constructor to allow perfect forwarding.
+
+## Back to managing thread lifetimes
+
+Now that, on a detour, we learnt about `std::forward`, `std::ref`, etc we might as well use these to manage lifetimes of a thread better. Consider the earlier example of our `thread_guard`  where we had 2 lines to ensure the thread completes within the current scope:
+
+```cpp
+std::thread my_thread(task);
+thread_guard guard(my_thread);
+```
+
+What if we can have a thread class that has a destructor that does the cleanup? We would have just one line!
+
+```cpp
+#include <thread>
+#include <iostream>
+
+class joining_thread {
+
+public:
+    // new things that we learnt today!
+    template<class Callable, class ...Args>
+    explicit joining_thread(Callable&& callable, Args&& ...args) :
+        _thread(std::forward<Callable>(callable), std::forward<Args>(args)...) {}
+
+    ~joining_thread() {
+        if (_thread.joinable()) {
+            _thread.join();
+        }
+    }
+private:
+    std::thread _thread;
+};
+
+class local_task {
+public:
+    void operator()() const {
+        std::cout << "Hello, joining thread!" << std::endl;
+    }
+};
+
+int main() {
+    local_task task;
+    joining_thread thread(task);
+}
+```
+
+## Stopping thread execution
+
+What if we wanted to stop the execution of an ongoing thread without killing it? C++ does not provide a way to do that (as one would expect - since user written code can’t be directly modified to allow for kill-checks). The solution is to have a **cooperative cancellation mechanism** where the user/developer using the thread can periodically check for interrupts.
+
+```cpp
+class local_task {
+public:
+    void operator()(KillCheck& kill_check, std::string& printable) const {
+        while(!kill_check()) {
+            std::cout << printable << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        }
+        std::cout << "Exiting!" << std::endl;
+    }
+};
+```
+
+Here, the developer should periodically make a kill check `!kill_check()` . This is the **cooperative** part. The first argument of the callable should be an `KillCheck` lvalue reference.
+
+```cpp
+class KillCheck {
+friend class interuptable_thread;
+public:
+    explicit KillCheck(): _signal(false) {}
+    bool operator()() {
+        return _signal.load(std::memory_order_relaxed);
+    }
+protected:
+    void set_killable() {
+        _signal.store(true, std::memory_order_relaxed);
+    }
+private:
+    std::atomic<bool> _signal;
+};
+```
+
+And finally, the `interuptable_thread`:
+
+```cpp
+#include <atomic>
+#include <thread>
+#include <iostream>
+
+class interuptable_thread {
+
+public:
+    template<class Callable, class ...Args>
+    interuptable_thread(Callable&& callable, Args&& ...args) :
+        _kill_check(),
+        _thread(std::forward<Callable>(callable), std::ref(_kill_check), std::forward<Args>(args)...) {}
+
+    ~interuptable_thread() {
+        if (_thread.joinable()) {
+            _thread.join();
+        }
+    }
+
+    void stop() {
+        _kill_check.set_killable();
+    }
+
+private:
+    KillCheck _kill_check;
+    std::thread _thread;
+};
+
+int main() {
+    local_task task;
+    std::string str("We will continue printing!");
+    interuptable_thread thread(task, std::ref(str));
+
+    // sleep for a bit!
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    thread.stop();
+}
+```
+
+And we have:
+
+```nasm
+jay@jayport:~/code/concurrency $ ./x
+We will continue printing!
+We will continue printing!
+We will continue printing!
+We will continue printing!
+We will continue printing!
+Exiting!
+```

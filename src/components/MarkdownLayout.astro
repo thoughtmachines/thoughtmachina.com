@@ -1,0 +1,95 @@
+---
+// src/components/MarkdownLayout.astro
+import "../styles/notion-md.css";
+
+// Render the slot content and extract headings dynamically
+const headings = [];
+---
+
+<div class="layout">
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <script>
+                    // Extract headings dynamically from the rendered content
+                    document.addEventListener("DOMContentLoaded", () => {
+                        const content =
+                            document.querySelector(".markdown-content");
+                        const sidebar =
+                            document.querySelector(".sidebar nav ul");
+                        const headings = content.querySelectorAll("h1, h2, h3");
+
+                        headings.forEach((heading) => {
+                            const level = parseInt(heading.tagName[1]); // Get heading level
+                            const text = heading.textContent.trim(); // Get heading text
+                            const id =
+                                heading.id ||
+                                text.toLowerCase().replace(/\s+/g, "-"); // Generate or use existing ID
+                            heading.id = id; // Set the ID on the heading
+
+                            // Add the heading to the sidebar
+                            const li = document.createElement("li");
+                            li.style.marginLeft = `${(level - 1) * 1.5}rem`;
+                            const a = document.createElement("a");
+                            a.href = `#${id}`;
+                            a.textContent = text;
+                            li.appendChild(a);
+                            sidebar.appendChild(li);
+                        });
+                    });
+                </script>
+            </ul>
+        </nav>
+    </aside>
+    <main class="markdown-content">
+        <slot />
+    </main>
+</div>
+
+<style>
+    .layout {
+        display: flex;
+    }
+
+    .sidebar {
+        width: 250px;
+        padding: 1rem;
+        background-color: #f4f4f4;
+        border-right: 1px solid #ddd;
+        position: sticky; /* Make the sidebar sticky */
+        top: 0; /* Stick to the top of the viewport */
+        height: 100vh; /* Ensure it spans the full height of the viewport */
+        overflow-y: auto; /* Add scrolling if the content overflows */
+    }
+
+    .sidebar nav ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .sidebar nav ul li {
+        margin-bottom: 0.5rem;
+    }
+
+    .sidebar nav ul li a {
+        text-decoration: none; /* Remove underline */
+        color: #333;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+        display: block;
+        border-radius: 4px;
+        transition:
+            background-color 0.3s,
+            color 0.3s; /* Smooth hover effects */
+    }
+
+    .sidebar nav ul li a:hover {
+        background-color: #007acc; /* Modern hover background */
+        color: white; /* Change text color on hover */
+    }
+
+    .markdown-content {
+        flex: 1;
+        padding: 1rem;
+    }
+</style>

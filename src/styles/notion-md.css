@@ -1,0 +1,162 @@
+/* ============================
+   Markdown Content Container
+============================ */
+.markdown-content {
+    font-family: 'Georgia', 'Times New Roman', Times, serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #111;
+    background-color: #fffdf9;
+    /* very light peach / almost white */
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    /* subtle shadow */
+}
+
+/* ============================
+     Headings
+  ============================ */
+.markdown-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.markdown-content h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: 1.75rem;
+    margin-bottom: 0.9rem;
+    text-align: center;
+}
+
+.markdown-content h3 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+/* ============================
+     Paragraphs and Text
+  ============================ */
+.markdown-content p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.markdown-content a {
+    color: #d35400;
+    /* subtle orange accent */
+    text-decoration: underline;
+}
+
+/* ============================
+     Images
+  ============================ */
+.markdown-content img {
+    max-width: 100%;
+    border-radius: 12px;
+    display: block;
+    margin: 1.5rem auto;
+}
+
+/* ============================
+     Blockquotes
+  ============================ */
+.markdown-content blockquote {
+    border-left: 4px solid #d35400;
+    padding-left: 1rem;
+    color: #5a3e36;
+    font-style: italic;
+    margin: 1.2rem 0;
+    background-color: #fff7f2;
+    /* subtle highlight behind quote */
+    border-radius: 6px;
+}
+
+/* ============================
+     Tables
+  ============================ */
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.2rem;
+}
+
+.markdown-content th,
+.markdown-content td {
+    border: 1px solid #f0e0d6;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+}
+
+.markdown-content th {
+    background-color: #f7efe9;
+}
+
+
+
+/* ============================
+     Overall spacing
+  ============================ */
+.markdown-content>*:not(:last-child) {
+    margin-bottom: 1.2rem;
+}
+
+/* ============================
+     Code Blocks
+  ============================ */
+
+
+
+/* ============================
+   Code Blocks (no syntax highlighting)
+============================ */
+.markdown-content pre {
+    background-color: #fff7f2;
+    /* soft, light peach-white */
+    color: #333;
+    /* all code text will be this color */
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border: 1px solid #f0e0d6;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Remove all internal highlighting / span colors */
+.markdown-content pre span {
+    background: none !important;
+    color: inherit !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+}
+
+/* Inline code (no highlighting) */
+.markdown-content code {
+    background-color: #ffeedd;
+    /* slightly darker peach for inline code */
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #333 !important;
+}

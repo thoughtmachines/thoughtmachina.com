@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Thought Blog</title>
+        <style>
+            body {
+                font-family: "Georgia", "Times New Roman", serif;
+                /* Apply serif font */
+                margin: 0;
+                padding: 0;
+                background-color: #f9f9f9;
+                position: relative;
+                min-height: 100vh;
+                overflow: hidden;
+            }
+
+            /* Modern Header */
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 2rem;
+                background-color: #ffffff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #1d4ed8;
+                text-decoration: none;
+            }
+
+            nav {
+                display: flex;
+                gap: 1.5rem;
+            }
+
+            nav a {
+                text-decoration: none;
+                color: #333;
+                font-size: 1rem;
+                font-weight: 500;
+                transition: color 0.3s ease;
+            }
+
+            nav a:hover {
+                color: #1d4ed8;
+            }
+
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+                padding: 2rem;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .blog-box {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                padding: 1.5rem;
+                text-align: center;
+                transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+                font-family: "Helvetica", "Arial", sans-serif;
+                /* Apply sans-serif font */
+            }
+
+            .blog-box:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            }
+
+            .blog-box h2 {
+                font-size: 1.5rem;
+                margin: 0 0 1rem;
+            }
+
+            .blog-box p {
+                font-size: 1rem;
+                color: #666;
+                margin: 0 0 1.5rem;
+            }
+
+            .blog-box a {
+                text-decoration: none;
+                color: #4a90e2;
+                font-weight: bold;
+            }
+
+            .blog-box a:hover {
+                text-decoration: underline;
+            }
+
+            .background-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: -10;
+                background: radial-gradient(
+                    ellipse 800px 1200px at 0% 0%,
+                    #1d4ed840 0%,
+                    #1d4ed825 20%,
+                    #1d4ed810 40%,
+                    rgba(255, 255, 255, 0.3) 70%,
+                    rgba(255, 255, 255, 0.8) 90%,
+                    white 100%
+                );
+            }
+
+            .svg-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: -10;
+                width: 100%;
+                height: 100%;
+                opacity: 0.2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- Modern Header -->
+        <header>
+            <a href="/" class="logo"> The Thought Blog</a>
+            <nav>
+                <!-- <a href="/">Home</a>
+            <a href="/about">About</a>
+            <a href="/blog">Blog</a>
+            <a href="/contact">Contact</a> -->
+            </nav>
+        </header>
+
+        <!-- Gradient Overlay -->
+        <div class="background-overlay"></div>
+
+        <!-- SVG Overlay -->
+        <svg class="svg-overlay" aria-hidden="true">
+            <defs>
+                <pattern
+                    id="programming-symbols"
+                    x="0"
+                    y="0"
+                    width="400"
+                    height="400"
+                    patternUnits="userSpaceOnUse"
+                >
+                    <text
+                        x="50"
+                        y="50"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="24"
+                        transform="rotate(-15)">&lt;/&gt;</text
+                    >
+                    <text
+                        x="150"
+                        y="100"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="20"
+                        transform="rotate(10)"></text>
+                    <text
+                        x="250"
+                        y="80"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="18"
+                        transform="rotate(-5)">&gt;</text
+                    >
+                    <text
+                        x="100"
+                        y="200"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="22"
+                        transform="rotate(15)">[]</text
+                    >
+                    <text
+                        x="300"
+                        y="180"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="20"
+                        transform="rotate(-10)">&lt;&gt;</text
+                    >
+                    <text
+                        x="200"
+                        y="250"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="24"
+                        transform="rotate(5)">()</text
+                    >
+                    <text
+                        x="50"
+                        y="320"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="18"
+                        transform="rotate(-8)">::</text
+                    >
+                    <text
+                        x="350"
+                        y="300"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="22"
+                        transform="rotate(12)">==</text
+                    >
+                    <text
+                        x="150"
+                        y="350"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="20"
+                        transform="rotate(-15)">++</text
+                    >
+                    <text
+                        x="250"
+                        y="370"
+                        fill="#1d4ed8"
+                        font-family="monospace"
+                        font-size="24"
+                        transform="rotate(8)">;</text
+                    >
+                </pattern>
+            </defs>
+            <rect fill="url(#programming-symbols)" width="100%" height="100%">
+            </rect>
+        </svg>
+
+        <div class="grid-container">
+            <div class="blog-box">
+                <h2>Systems Playground - Part 1</h2>
+                <p>Managing Threads in C++</p>
+                <a href="/blog/systems-playground/cpp-concurrency-part-1"
+                    >Read More</a
+                >
+            </div>
+        </div>
+    </body>
+</html>
