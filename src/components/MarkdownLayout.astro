@@ -20,7 +20,11 @@ const headings = [];
         hljs.highlightAll();
     </script>
     <style>
+        @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@700&display=swap");
+
         header {
+            font-family: "IBM Plex Mono", monospace; /* Change to IBM Plex Mono */
+            font-weight: 700; /* Bold */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -35,8 +39,12 @@ const headings = [];
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #1d4ed8;
+            color: black;
             text-decoration: none;
+        }
+
+        .logo-highlight {
+            color: #1d4ed8; /* Blue for "The Thought" */
         }
 
         nav {
@@ -55,14 +63,34 @@ const headings = [];
         nav a:hover {
             color: #1d4ed8;
         }
+
+        .logo span {
+            display: block; /* default for mobile */
+        }
+
+        @media (min-width: 768px) {
+            .logo span {
+                display: inline; /* inline for desktop */
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Top Bar -->
     <header>
-        <a href="/" class="logo">The Thought Blog</a>
+        <!-- <a href="/" class="logo">
+            The <span class="logo-highlight">thought</span> blog
+        </a> -->
+        <a
+            href="/"
+            class="logo text-center text-lg md:text-2xl md:text-left font-bold"
+        >
+            <span class="block md:inline">The</span>
+            <span class="block md:inline logo-highlight">thought</span>
+            <span class="block md:inline">blog</span>
+        </a>
         <nav>
-            <a href="/">Home</a>
+            <a href="/" style="color:#1d4ed8">Home</a>
             <!-- <a href="/about">About</a> -->
             <a href="/blog">Blog</a>
             <!-- <a href="/contact">Contact</a> -->
