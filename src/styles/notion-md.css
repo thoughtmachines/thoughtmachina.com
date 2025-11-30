@@ -3,7 +3,7 @@
 ============================ */
 .markdown-content {
     font-family: 'Georgia', 'Times New Roman', Times, serif;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.7;
     color: #111;
     background-color: #fffdf9;
@@ -27,12 +27,42 @@
     text-align: center;
 }
 
+.markdown-content h1 code {
+    margin-bottom: 1rem;
+    text-align: justify;
+    color: crimson;
+    background-color: #ebe9e3;
+    padding: 0.1rem 0.1rem;
+    /* small padding inside code */
+    border-radius: 4px;
+    /* rounded corners */
+    font-family: 'Fira Code', monospace;
+    /* optional: monospace font */
+    font-size: 0.95em;
+    /* slightly smaller inline code */
+}
+
 .markdown-content h2 {
     font-size: 1.75rem;
     font-weight: 600;
     margin-top: 1.75rem;
     margin-bottom: 0.9rem;
     text-align: center;
+}
+
+.markdown-content h2 code {
+    margin-bottom: 1rem;
+    text-align: justify;
+    color: crimson;
+    background-color: #ebe9e3;
+    padding: 0.1rem 0.1rem;
+    /* small padding inside code */
+    border-radius: 6px;
+    /* rounded corners */
+    font-family: 'Fira Code', monospace;
+    /* optional: monospace font */
+    font-size: 0.95em;
+    /* slightly smaller inline code */
 }
 
 .markdown-content h3 {
@@ -43,12 +73,42 @@
     text-align: center;
 }
 
+.markdown-content h3 code {
+    margin-bottom: 1rem;
+    text-align: justify;
+    color: crimson;
+    background-color: #ebe9e3;
+    padding: 0.1rem 0.1rem;
+    /* small padding inside code */
+    border-radius: 8px;
+    /* rounded corners */
+    font-family: 'Fira Code', monospace;
+    /* optional: monospace font */
+    font-size: 0.95em;
+    /* slightly smaller inline code */
+}
+
 /* ============================
      Paragraphs and Text
   ============================ */
 .markdown-content p {
     margin-bottom: 1rem;
     text-align: justify;
+}
+
+.markdown-content p code {
+    margin-bottom: 1rem;
+    text-align: justify;
+    color: crimson;
+    background-color: #ebe9e3;
+    padding: 0.1rem 0.1rem;
+    /* small padding inside code */
+    border-radius: 4px;
+    /* rounded corners */
+    font-family: 'Fira Code', monospace;
+    /* optional: monospace font */
+    font-size: 0.95em;
+    /* slightly smaller inline code */
 }
 
 .markdown-content ul,
