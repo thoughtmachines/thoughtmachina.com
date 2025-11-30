@@ -12,6 +12,6 @@ export default defineConfig({
 
   integrations: [mdx()],
   markdown: {
-    syntaxHighlight: 'prism', // or 'prism'
+    syntaxHighlight: 'shiki', // or 'prism'
   },
 });
