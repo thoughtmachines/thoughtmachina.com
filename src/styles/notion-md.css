@@ -111,6 +111,21 @@
     /* slightly smaller inline code */
 }
 
+.markdown-content li code {
+    margin-bottom: 1rem;
+    text-align: justify;
+    color: crimson;
+    background-color: #ebe9e3;
+    padding: 0.1rem 0.1rem;
+    /* small padding inside code */
+    border-radius: 4px;
+    /* rounded corners */
+    font-family: 'Fira Code', monospace;
+    /* optional: monospace font */
+    font-size: 0.95em;
+    /* slightly smaller inline code */
+}
+
 .markdown-content ul,
 .markdown-content ol {
     margin-left: 1.5rem;
@@ -129,6 +144,8 @@
 .markdown-content img {
     max-width: 100%;
     border-radius: 12px;
+    height: auto;
+    /* keeps aspect ratio */
     display: block;
     margin: 1.5rem auto;
 }
