@@ -12,13 +12,13 @@
         <meta property="og:url" content="https://www.thoughtmachina.com/blog" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>The Thought Blog</title>
+
         <style>
             @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@700&display=swap");
 
             body {
-                font-family:
-                    "IBM Plex Mono", monospace; /* Change to IBM Plex Mono */
-                font-weight: 700; /* Bold */
+                font-family: "IBM Plex Mono", monospace;
+                font-weight: 700;
                 margin: 0;
                 padding: 0;
                 background-color: #f9f9f9;
@@ -26,7 +26,7 @@
                 min-height: 100vh;
             }
 
-            /* Modern Header */
+            /* Header */
             header {
                 display: flex;
                 justify-content: space-between;
@@ -47,7 +47,7 @@
             }
 
             .logo-highlight {
-                color: #1d4ed8; /* Blue for "The Thought" */
+                color: #1d4ed8;
             }
 
             nav {
@@ -60,20 +60,20 @@
                 color: #333;
                 font-size: 1rem;
                 font-weight: 500;
-                transition: color 0.3s ease;
             }
 
             nav a:hover {
                 color: #1d4ed8;
             }
 
+            /* Grid */
             .grid-container {
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                gap: 0.8rem; /* slightly smaller gap */
-                padding: 1rem; /* less padding around the grid */
-                max-width: 750px; /* reduce overall grid width */
-                margin: 0 auto; /* center grid */
+                gap: 0.8rem;
+                padding: 1rem;
+                max-width: 750px;
+                margin: 0 auto;
             }
 
             .blog-box {
@@ -98,10 +98,9 @@
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
             }
 
-            /* Image wrapper for 4:3 aspect ratio */
             .image-wrapper {
                 width: 100%;
-                aspect-ratio: 4 / 3; /* image ratio */
+                aspect-ratio: 4 / 3;
                 overflow: hidden;
             }
 
@@ -121,6 +120,20 @@
                 justify-content: flex-start;
             }
 
+            /* Part label */
+            .part-label {
+                display: inline-block;
+                align-self: flex-start;
+                font-size: 0.65rem;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                color: #1d4ed8;
+                background: rgba(29, 78, 216, 0.1);
+                border: 1px solid rgba(29, 78, 216, 0.25);
+                padding: 0.15rem 0.45rem;
+                margin-bottom: 0.4rem;
+            }
+
             .text-wrapper h2 {
                 font-size: 1.2rem;
                 font-weight: 600;
@@ -134,6 +147,7 @@
                 line-height: 1.4;
             }
 
+            /* Background */
             .background-overlay {
                 position: absolute;
                 inset: 0;
@@ -153,18 +167,16 @@
                 position: absolute;
                 inset: 0;
                 z-index: -10;
-                width: 100%;
-                height: 100%;
                 opacity: 0.2;
             }
 
             .logo span {
-                display: block; /* default for mobile */
+                display: block;
             }
 
             @media (min-width: 768px) {
                 .logo span {
-                    display: inline; /* inline for desktop */
+                    display: inline;
                     font-size: 1.5rem;
                 }
             }
@@ -303,10 +315,12 @@
                     />
                 </div>
                 <div class="text-wrapper">
+                    <span class="part-label">Part 1</span>
                     <h2>Vector Similarity Search</h2>
                     <p>The brute force approach</p>
                 </div>
             </a>
+
             <a
                 href="/blog/query-execution/Vector-Similarity-Search-Clustering"
                 class="blog-box"
@@ -317,10 +331,12 @@
                     />
                 </div>
                 <div class="text-wrapper">
+                    <span class="part-label">Part 2</span>
                     <h2>Vector Similarity Search</h2>
                     <p>Clustering</p>
                 </div>
             </a>
+
             <a
                 href="/blog/query-execution/Vector-Similarity-Search-IVF"
                 class="blog-box"
@@ -331,10 +347,12 @@
                     />
                 </div>
                 <div class="text-wrapper">
+                    <span class="part-label">Part 3</span>
                     <h2>Vector Similarity Search</h2>
-                    <p>Inverted Indexes - IVF_FLAT</p>
+                    <p>Inverted Indexes – IVF_FLAT</p>
                 </div>
             </a>
+
             <a
                 href="/blog/systems-playground/cpp-concurrency-part-1"
                 class="blog-box"
@@ -345,8 +363,9 @@
                     />
                 </div>
                 <div class="text-wrapper">
-                    <h2>Systems Playground - Part 1</h2>
-                    <p>Managing Threads in C++</p>
+                    <span class="part-label">Part 1</span>
+                    <h2>Concurrency in C++</h2>
+                    <p>Managing Threads</p>
                 </div>
             </a>
 
@@ -360,8 +379,9 @@
                     />
                 </div>
                 <div class="text-wrapper">
-                    <h2>Systems Playground - Part 2</h2>
-                    <p>Synchronizing Concurrent Operations in C++</p>
+                    <span class="part-label">Part 2</span>
+                    <h2>Concurrency in C++</h2>
+                    <p>Synchronizing Concurrent Operations</p>
                 </div>
             </a>
 
@@ -375,10 +395,11 @@
                     />
                 </div>
                 <div class="text-wrapper">
-                    <h2>Systems Playground - Part 3</h2>
-                    <p>Thread Pools in C++</p>
+                    <span class="part-label">Part 3</span>
+                    <h2>Concurrency in C++</h2>
+                    <p>Thread Pools</p>
                 </div>
             </a>
-        </div></body
-    >
+        </div>
+    </body>
 </html>
